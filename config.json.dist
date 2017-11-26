@@ -1,0 +1,19 @@
+{
+    "dialogflow": {
+        "token": ""
+    },
+    "http": {
+        "port": 9999
+    },
+    "api-train": {
+        "host": "https://api.train.cat",
+        "username": "",
+        "password": ""
+    },
+    "bot": {
+        "debug": true,
+        "telegram": {
+            "token": ""
+        }
+    }
+}
