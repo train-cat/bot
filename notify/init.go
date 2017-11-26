@@ -19,17 +19,24 @@ func Init() {
 	var err error
 
 	telegram, err = initTelegram()
-
-	if err != nil {
-		log.Errorf("[init notification] %s", err)
-		os.Exit(helper.ExitCodeErrorInitNotification)
-	}
+	exitOnError(err)
 
 	token = viper.GetString("bot.token")
 }
 
+func exitOnError(err error) {
+	if err != nil {
+		log.Errorf("[init notification] %s", err)
+		os.Exit(helper.ExitCodeErrorInitNotification)
+	}
+}
+
 func initTelegram() (*tgbotapi.BotAPI, error) {
 	bot, err := tgbotapi.NewBotAPI(viper.GetString("bot.telegram.token"))
+
+	if err != nil {
+		return nil, err
+	}
 
 	bot.Debug = viper.GetBool("bot.debug")
 
