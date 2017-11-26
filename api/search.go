@@ -3,9 +3,9 @@ package api
 import (
 	"time"
 
+	"github.com/train-cat/bot/helper"
 	"github.com/train-cat/client-train-go"
 	"github.com/train-cat/client-train-go/filters"
-	"github.com/train-cat/bot/helper"
 )
 
 const (
@@ -13,6 +13,7 @@ const (
 	precisionSchedule = 20
 )
 
+// SearchStops return list of stops
 func SearchStops(originID int, destinationID int, schedule string) ([]traincat.Stop, error) {
 	t, err := time.Parse("15:04:05", schedule)
 
@@ -27,8 +28,8 @@ func SearchStops(originID int, destinationID int, schedule string) ([]traincat.S
 		Pagination: filters.Pagination{
 			MaxPerPage: helper.Int(maxStops),
 		},
-		ScheduledBefore: helper.String(before),
-		ScheduledAfter:  helper.String(after),
+		ScheduledBefore:       helper.String(before),
+		ScheduledAfter:        helper.String(after),
 		TrainThroughStationID: helper.Int(destinationID),
 	}
 
@@ -41,6 +42,7 @@ func SearchStops(originID int, destinationID int, schedule string) ([]traincat.S
 	return stops, nil
 }
 
+// SearchStations return list of stations (find by name)
 func SearchStations(name string) ([]traincat.Station, error) {
 	f := &filters.Station{
 		Pagination: filters.Pagination{

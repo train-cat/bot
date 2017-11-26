@@ -2,6 +2,7 @@ package wording
 
 import "fmt"
 
+// List of keys available for wording
 const (
 	HelloOne             = "hello_one"
 	HelloTwo             = "hello_two"
@@ -33,8 +34,8 @@ var (
 		AskListSchedule:      {"J'ai une liste de train, lequel correspond à ton train ?"},
 		AskOrigin:            {"Je vais avoir besoin de ta gare de départ, peux-tu me le dire ?"},
 		AskDestination:       {"%s c'est noté ! Peux-tu me dire ta gare de destination ?"},
-		OriginNotFound:       {"Je me pensais pourtant forte en géographie 🤓. Peux-tu me préciser ta gare ?"},
-		DestinationNotFound:  {"Je me pensais pourtant forte en géographie 🤓. Peux-tu me préciser ta gare ?"},
+		OriginNotFound:       {"Je me pensais pourtant forte en géographie 🤓. Peux-tu me préciser ta gare d'origine ?"},
+		DestinationNotFound:  {"Je me pensais pourtant forte en géographie 🤓. Peux-tu me préciser ta gare de destination ?"},
 		SelectOrigin:         {"J'ai plusieurs gares ! Peux-tu me préciser ta gare ?"},
 		SelectDestination:    {"J'ai plusieurs gares ! Peux-tu me préciser ta gare ?"},
 		OriginOkAskSchedule:  {"Destination %s ! A quelle heure pars-tu de la gare de %s?"},
@@ -44,10 +45,11 @@ var (
 		Cancel:               {"Très bien, j'arrête !"},
 		CancelAlert:          {"Ok ! J'oublie cette alerte, tu ne seras pas notifié"},
 		IssueOne:             {"Hey, malheuresement ton train au départ de %s à %s est %s. ✊✊"},
-		IssueTwo:             {"Je ne suis pas encore capable de t'aider 😢. Mais promis je travaille dure pour y arriver ! Bon courage 😊"},
+		IssueTwo:             {"Je ne suis pas encore capable de t'aider 😢. Mais promis je travaille dur pour y arriver ! Bon courage 😊"},
 	}
 )
 
+// Get random message for the key
 func Get(key string, a ...interface{}) string {
 	str, ok := wordings[key]
 

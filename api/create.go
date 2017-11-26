@@ -2,6 +2,7 @@ package api
 
 import "github.com/train-cat/client-train-go"
 
+// CreateAlert -
 func CreateAlert(stationID int, code string, typ string, userID string) error {
 	actionInput := traincat.ActionInput{
 		Type: typ,

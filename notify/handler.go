@@ -33,6 +33,7 @@ const (
 	stateDeleted = "deleted"
 )
 
+// Handler notify request asking for notification
 func Handler(w http.ResponseWriter, req *http.Request) {
 	n := &notification{}
 

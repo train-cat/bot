@@ -5,8 +5,10 @@ import (
 	"github.com/train-cat/bot/wording"
 )
 
+// ActionWelcome -
 const ActionWelcome = "welcome"
 
+// Welcome intent
 func Welcome(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 

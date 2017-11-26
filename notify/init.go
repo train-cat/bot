@@ -13,6 +13,7 @@ var (
 	telegram *tgbotapi.BotAPI
 )
 
+// Init should be call after log & config init
 func Init() {
 	var err error
 

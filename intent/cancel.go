@@ -5,8 +5,10 @@ import (
 	"github.com/train-cat/bot/wording"
 )
 
+// ActionCancel -
 const ActionCancel = "cancel"
 
+// Cancel intent
 func Cancel(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 

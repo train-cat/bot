@@ -2,6 +2,7 @@ package notify
 
 import "net/url"
 
+// Telegram send message via telegram API
 func Telegram(userID string, messages ...string) error {
 	for _, m := range messages {
 		params := url.Values{}

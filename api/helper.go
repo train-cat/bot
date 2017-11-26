@@ -6,6 +6,7 @@ import (
 	"github.com/train-cat/client-train-go"
 )
 
+// GetCodeTrainFromStop return code train
 func GetCodeTrainFromStop(s *traincat.Stop) string {
 	ss := strings.Split(s.Links["train"].Href, "/")
 

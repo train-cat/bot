@@ -6,8 +6,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/train-cat/bot/helper"
 	"github.com/train-cat/bot/api"
+	"github.com/train-cat/bot/helper"
 	"github.com/train-cat/bot/notify"
 )
 

@@ -9,13 +9,16 @@ import (
 	"github.com/train-cat/bot/wording"
 )
 
+// List of actions receive by dialogflow
 const (
 	ActionCreateAlertStart      = "create_alert_start"
 	ActionCreateAlert           = "create_alert"
 	ActionCreateAlertSelectStop = "create_alert_select_stop"
 	ActionCreateAlertConfirm    = "create_alert_confirm"
 	ActionCreateAlertNo         = "create_alert_no"
+)
 
+const (
 	keyOriginID       = "origin_id"
 	keyOriginRaw      = "origin_raw"
 	keyDestinationID  = "destination_id"
@@ -29,6 +32,7 @@ const (
 	ctxCreateAlert      = "createalert-followup"
 )
 
+// CreateAlertStart intent
 func CreateAlertStart(_ *dialogflow.Request) (*dialogflow.Response, error) {
 	r := dialogflow.NewResponse()
 
@@ -39,6 +43,7 @@ func CreateAlertStart(_ *dialogflow.Request) (*dialogflow.Response, error) {
 	return r, nil
 }
 
+// CreateAlert intent
 func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 
@@ -91,6 +96,7 @@ func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	return res, nil
 }
 
+// CreateAlertSelectStop intent
 func CreateAlertSelectStop(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 
@@ -136,6 +142,7 @@ func CreateAlertSelectStop(req *dialogflow.Request) (*dialogflow.Response, error
 	return res, nil
 }
 
+// CreateAlertConfirm intent
 func CreateAlertConfirm(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 
@@ -172,6 +179,7 @@ func CreateAlertConfirm(req *dialogflow.Request) (*dialogflow.Response, error) {
 	return res, nil
 }
 
+// CreateAlertNo intent
 func CreateAlertNo(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 
