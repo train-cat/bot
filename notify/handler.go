@@ -35,6 +35,12 @@ const (
 
 // Handler notify request asking for notification
 func Handler(w http.ResponseWriter, req *http.Request) {
+	if !isTrustRequest(req) {
+		log.Errorf("[handler notify] untrust request")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	n := &notification{}
 
 	bs, err := ioutil.ReadAll(req.Body)
@@ -54,6 +60,11 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	go n.send()
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func isTrustRequest(req *http.Request) bool {
+	return req.Method == http.MethodPost &&
+		token == req.URL.Query().Get("token")
 }
 
 func (n notification) send() {

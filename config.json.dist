@@ -12,6 +12,7 @@
     },
     "bot": {
         "debug": true,
+        "token": "",
         "telegram": {
             "token": ""
         }

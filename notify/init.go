@@ -11,6 +11,7 @@ import (
 
 var (
 	telegram *tgbotapi.BotAPI
+	token string
 )
 
 // Init should be call after log & config init
@@ -23,6 +24,8 @@ func Init() {
 		log.Errorf("[init notification] %s", err)
 		os.Exit(helper.ExitCodeErrorInitNotification)
 	}
+
+	token = viper.GetString("bot.token")
 }
 
 func initTelegram() (*tgbotapi.BotAPI, error) {
