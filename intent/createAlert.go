@@ -24,7 +24,7 @@ const (
 	keyDestinationID  = "destination_id"
 	keyDestinationRaw = "destination_raw"
 	keySchedule       = "schedule"
-	keyCode           = "code"
+	keyStopTimeID     = "stop_time_id"
 	keyListEnabled    = "list_enabled"
 
 	ctxGeneric          = "generic"
@@ -132,8 +132,8 @@ func CreateAlertSelectStop(req *dialogflow.Request) (*dialogflow.Response, error
 		{
 			Name: ctxCreateAlert,
 			Parameters: dialogflow.Parameters{
-				keyOriginID: strconv.Itoa(origin),
-				keyCode:     api.GetCodeTrainFromStop(stop),
+				keyOriginID:   strconv.Itoa(origin),
+				keyStopTimeID: strconv.Itoa(int(stop.ID)),
 			},
 			Lifespan: 2,
 		},
@@ -152,7 +152,7 @@ func CreateAlertConfirm(req *dialogflow.Request) (*dialogflow.Response, error) {
 		return nil, err
 	}
 
-	code, err := ctx.Parameters.GetString(keyCode)
+	stopTimeID, err := ctx.Parameters.GetInt(keyStopTimeID)
 
 	if err != nil {
 		return nil, err
@@ -166,7 +166,7 @@ func CreateAlertConfirm(req *dialogflow.Request) (*dialogflow.Response, error) {
 
 	userID := req.GetUserID()
 
-	err = api.CreateAlert(originID, code, req.OriginalRequest.Source, userID)
+	err = api.CreateAlert(originID, stopTimeID, req.OriginalRequest.Source, userID)
 
 	if err != nil {
 		return nil, err

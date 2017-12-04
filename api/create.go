@@ -3,7 +3,7 @@ package api
 import "github.com/train-cat/client-train-go"
 
 // CreateAlert -
-func CreateAlert(stationID int, code string, typ string, userID string) error {
+func CreateAlert(stationID int, stopTimeID int, typ string, userID string) error {
 	actionInput := traincat.ActionInput{
 		Type: typ,
 		Data: generateData(typ, userID),
@@ -17,7 +17,7 @@ func CreateAlert(stationID int, code string, typ string, userID string) error {
 
 	alertInput := traincat.AlertInput{ActionID: action.ID}
 
-	_, err = traincat.PostAlert(stationID, code, alertInput)
+	_, err = traincat.PostAlert(stationID, stopTimeID, alertInput)
 
 	return err
 }

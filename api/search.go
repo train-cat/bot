@@ -10,11 +10,11 @@ import (
 
 const (
 	maxStops          = 10
-	precisionSchedule = 20
+	precisionSchedule = 6
 )
 
 // SearchStops return list of stops
-func SearchStops(originID int, destinationID int, schedule string) ([]traincat.Stop, error) {
+func SearchStops(originID int, destinationID int, schedule string) ([]traincat.StopTime, error) {
 	t, err := time.Parse("15:04:05", schedule)
 
 	if err != nil {
@@ -24,7 +24,7 @@ func SearchStops(originID int, destinationID int, schedule string) ([]traincat.S
 	before := t.Add(time.Minute * precisionSchedule).Format("15:04")
 	after := t.Add(time.Minute * precisionSchedule * -1).Format("15:04")
 
-	f := &filters.Stop{
+	f := &filters.StopTime{
 		Pagination: filters.Pagination{
 			MaxPerPage: helper.Int(maxStops),
 		},
@@ -33,7 +33,7 @@ func SearchStops(originID int, destinationID int, schedule string) ([]traincat.S
 		TrainThroughStationID: helper.Int(destinationID),
 	}
 
-	stops, err := traincat.CGetStops(uint(originID), f)
+	stops, err := traincat.CGetStopsTime(uint(originID), f)
 
 	if err != nil {
 		return nil, err

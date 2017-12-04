@@ -19,16 +19,16 @@ func FindStationNameByID(stationID int) string {
 }
 
 // FindStopByOriginAndSchedule return one stop
-func FindStopByOriginAndSchedule(originID int, schedule string) *traincat.Stop {
+func FindStopByOriginAndSchedule(originID int, schedule string) *traincat.StopTime {
 	// TODO maybe add destination
-	f := &filters.Stop{
+	f := &filters.StopTime{
 		Pagination: filters.Pagination{
 			MaxPerPage: helper.Int(1),
 		},
 		ScheduledAt: helper.String(schedule),
 	}
 
-	stops, err := traincat.CGetStops(uint(originID), f)
+	stops, err := traincat.CGetStopsTime(uint(originID), f)
 
 	if err != nil {
 		// TODO log
