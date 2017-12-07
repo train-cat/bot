@@ -10,7 +10,7 @@ import (
 
 const (
 	maxStops          = 10
-	precisionSchedule = 6
+	precisionSchedule = 15
 )
 
 // SearchStops return list of stops

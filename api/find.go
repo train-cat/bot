@@ -1,10 +1,6 @@
 package api
 
-import (
-	"github.com/train-cat/bot/helper"
-	"github.com/train-cat/client-train-go"
-	"github.com/train-cat/client-train-go/filters"
-)
+import "github.com/train-cat/client-train-go"
 
 // FindStationNameByID return station name
 func FindStationNameByID(stationID int) string {
@@ -16,28 +12,4 @@ func FindStationNameByID(stationID int) string {
 	}
 
 	return s.Name
-}
-
-// FindStopByOriginAndSchedule return one stop
-func FindStopByOriginAndSchedule(originID int, schedule string) *traincat.StopTime {
-	// TODO maybe add destination
-	f := &filters.StopTime{
-		Pagination: filters.Pagination{
-			MaxPerPage: helper.Int(1),
-		},
-		ScheduledAt: helper.String(schedule),
-	}
-
-	stops, err := traincat.CGetStopsTime(uint(originID), f)
-
-	if err != nil {
-		// TODO log
-		return nil
-	}
-
-	if len(stops) == 0 {
-		return nil
-	}
-
-	return &stops[0]
 }
