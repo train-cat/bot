@@ -7,6 +7,9 @@ go:
 services:
   - docker
 
+before_script:
+  - go get -t -v ./...
+
 script:
   - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bot *.go
 
