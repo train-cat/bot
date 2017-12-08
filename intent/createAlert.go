@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/Eraac/dialogflow"
-	// log "github.com/sirupsen/logrus"
 	"github.com/train-cat/bot/api"
 	"github.com/train-cat/bot/helper"
 	"github.com/train-cat/bot/wording"
@@ -14,6 +13,7 @@ const (
 	ActionAskingForCreateAlert      = "asking_for_create_alert"
 	ActionCreateAlert               = "create_alert"
 	ActionCreateAlertSelectStoptime = "create_alert_select_stoptime"
+	ActionCreateAlertRetry          = "create_alert_retry"
 
 	ctxCreateAlert     = "ctx_create_alert"
 	evtCreateAlert     = "event_create_alert"
@@ -25,26 +25,33 @@ const (
 	keyChoiceStoptime = "choice_stoptime"
 )
 
-func AskingForCreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
-	res := dialogflow.NewResponse()
-
+func forwardToCreateAlert(res *dialogflow.Response, say string) (*dialogflow.Response, error) {
 	res.FollowUpEvent = &dialogflow.FollowUpEvent{
 		Name: evtCreateAlert,
+	}
+
+	res.ContextOut = dialogflow.Contexts{
+		{Name: ctxCreateAlert, Lifespan: 3, Parameters: dialogflow.Parameters{"say": say}},
+		{Name: "askingforcreatealert-followup", Lifespan: 3},
 	}
 
 	return res, nil
 }
 
+func AskingForCreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
+	res := dialogflow.NewResponse()
+
+	return forwardToCreateAlert(res, wording.Get(wording.StartCreateAlert))
+}
+
 func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	res := dialogflow.NewResponse()
 
-	// requête via l'event de l'intent précédent
+	// request via event
 	if req.Result.ResolvedQuery == evtCreateAlert {
-		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.StartCreateAlert)}, helper.Platforms...)
-
-		res.ContextOut = dialogflow.Contexts{
-			{Name: ctxCreateAlert, Lifespan: 3},
-		}
+		ctx, _ := req.Result.Contexts.Find(ctxCreateAlert)
+		say, _ := ctx.Parameters.GetString("say")
+		res.AddText(dialogflow.TextMessage{Speech: say}, helper.Platforms...)
 	}
 
 	if !req.Result.Parameters.HasKey(keyOriginID) {
@@ -87,7 +94,13 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	destinationID, _ := ctx.Parameters.GetInt(keyDestinationID)
 	schedule, _ := ctx.Parameters.GetString(keySchedule)
 
-	stopsTime, _ := api.SearchStops(originID, destinationID, schedule)
+	stopsTime, err := api.SearchStops(originID, destinationID, schedule)
+
+	if err != nil {
+		return helper.BotHasFail(res, err)
+	}
+
+	// TODO if stopstime 0 -> event custom + message "no_train"
 
 	if req.Result.ResolvedQuery == evtSelectStopsTime {
 		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskListSchedule)}, helper.Platforms...)
@@ -98,11 +111,11 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 			str := fmt.Sprintf("Choix %d", i+1)
 
 			res.AddCard(dialogflow.CardMessage{
-				ImageURL: fmt.Sprintf("https://cards-generator.train.cat/generate?mission=MALA&origin=Poissy&terminus=Paris%%20Saint-Lazare&schedule=%s&days=124", stoptime.Schedule),
+				ImageURL: helper.StopTimeToCards(stoptime),
 				Title:    str,
-				Subtitle: "Je suis sous-titre",
+				// Subtitle: "Je suis sous-titre",
 				Buttons: []dialogflow.Button{
-					{Text: "Je choisis celui-là", PostBack: str},
+					{Text: "Je choisis celui-là ☝️", PostBack: str},
 				},
 			}, helper.Platforms...)
 		}
@@ -111,22 +124,38 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	}
 
 	if !req.Result.Parameters.HasKey(keyChoiceStoptime) {
-		// TODO re-demander
+		res.AddText(dialogflow.TextMessage{
+			Speech: wording.Get(wording.ReAskSelectSchedule),
+		}, helper.Platforms...)
+
+		return res, nil
 	}
 
 	choice, _ := req.Result.Parameters.GetInt(keyChoiceStoptime)
 
-	if choice >= len(stopsTime) {
-		// TODO ask user good choice
+	if choice > len(stopsTime) {
+		res.AddText(dialogflow.TextMessage{
+			Speech: wording.Get(wording.ChoiceOutOfRange, len(stopsTime)),
+		}, helper.Platforms...)
+
+		return res, nil
 	}
 
-	stoptime := stopsTime[choice -1]
+	stoptime := stopsTime[choice-1]
+
+	if err = api.CreateAlert(originID, stoptime.ID, req.OriginalRequest.Source, req.GetUserID()); err != nil {
+		return helper.BotHasFail(res, err)
+	}
 
 	res.AddText(dialogflow.TextMessage{
-		Speech: fmt.Sprintf("YES %d - %d", choice, stoptime.ID),
+		Speech: wording.Get(wording.ConfirmationAlert),
 	}, helper.Platforms...)
 
-	// TODO persist alert
-
 	return res, nil
+}
+
+func CreateAlertRetry(req *dialogflow.Request) (*dialogflow.Response, error) {
+	res := dialogflow.NewResponse()
+
+	return forwardToCreateAlert(res, wording.Get(wording.Retry))
 }

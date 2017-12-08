@@ -10,6 +10,9 @@
         "username": "",
         "password": ""
     },
+    "cards-generator": {
+        "host": "https://cards-generator.train.cat"
+    },
     "bot": {
         "debug": true,
         "token": "",
