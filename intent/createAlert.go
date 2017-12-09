@@ -51,11 +51,11 @@ func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	if req.Result.ResolvedQuery == evtCreateAlert {
 		ctx, _ := req.Result.Contexts.Find(ctxCreateAlert)
 		say, _ := ctx.Parameters.GetString("say")
-		res.AddText(dialogflow.TextMessage{Speech: say}, helper.Platforms...)
+		res.AddText(dialogflow.TextMessage{Speech: say}, req.Source())
 	}
 
 	if !req.Result.Parameters.HasKey(keyOriginID) {
-		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskOrigin)}, helper.Platforms...)
+		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskOrigin)}, req.Source())
 
 		return res, nil
 	}
@@ -64,7 +64,7 @@ func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	originName := api.FindStationNameByID(originID)
 
 	if !req.Result.Parameters.HasKey(keyDestinationID) {
-		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskDestination, originName)}, helper.Platforms...)
+		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskDestination, originName)}, req.Source())
 
 		return res, nil
 	}
@@ -73,7 +73,7 @@ func CreateAlert(req *dialogflow.Request) (*dialogflow.Response, error) {
 	destinationName := api.FindStationNameByID(destinationID)
 
 	if !req.Result.Parameters.HasKey(keySchedule) {
-		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskSchedule, originName, destinationName)}, helper.Platforms...)
+		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskSchedule, originName, destinationName)}, req.Source())
 
 		return res, nil
 	}
@@ -97,7 +97,7 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	stopsTime, err := api.SearchStops(originID, destinationID, schedule)
 
 	if err != nil {
-		return helper.BotHasFail(res, err)
+		return helper.BotHasFail(req, err)
 	}
 
 	if len(stopsTime) == 0 {
@@ -107,7 +107,7 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	}
 
 	if req.Result.ResolvedQuery == evtSelectStopsTime {
-		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskListSchedule)}, helper.Platforms...)
+		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskListSchedule)}, req.Source())
 
 		// TODO add oral version
 
@@ -121,7 +121,7 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 				Buttons: []dialogflow.Button{
 					{Text: "Je choisis celui-là ☝️", PostBack: str},
 				},
-			}, helper.Platforms...)
+			}, req.Source())
 		}
 
 		return res, nil
@@ -130,7 +130,7 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	if !req.Result.Parameters.HasKey(keyChoiceStoptime) {
 		res.AddText(dialogflow.TextMessage{
 			Speech: wording.Get(wording.ReAskSelectSchedule),
-		}, helper.Platforms...)
+		}, req.Source())
 
 		return res, nil
 	}
@@ -140,7 +140,7 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	if choice > len(stopsTime) {
 		res.AddText(dialogflow.TextMessage{
 			Speech: wording.Get(wording.ChoiceOutOfRange, len(stopsTime)),
-		}, helper.Platforms...)
+		}, req.Source())
 
 		return res, nil
 	}
@@ -148,12 +148,12 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 	stoptime := stopsTime[choice-1]
 
 	if err = api.CreateAlert(originID, stoptime.ID, req.OriginalRequest.Source, req.GetUserID()); err != nil {
-		return helper.BotHasFail(res, err)
+		return helper.BotHasFail(req, err)
 	}
 
 	res.AddText(dialogflow.TextMessage{
 		Speech: wording.Get(wording.ConfirmationAlert),
-	}, helper.Platforms...)
+	}, req.Source())
 
 	return res, nil
 }

@@ -51,12 +51,14 @@ func StopTimeToCards(s traincat.StopTime) string {
 	return fmt.Sprintf("%s/generate/stop_time?%s", viper.GetString("cards-generator.host"), q.Encode())
 }
 
-func BotHasFail(res *dialogflow.Response, err error) (*dialogflow.Response, error) {
+func BotHasFail(req *dialogflow.Request, err error) (*dialogflow.Response, error) {
+	res := dialogflow.NewResponse()
+
 	log.Error(err)
 
 	res.AddText(dialogflow.TextMessage{
 		Speech: wording.Get(wording.HasFail),
-	}, Platforms...)
+	}, req.Source())
 
 	return res, nil
 }
