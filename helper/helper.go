@@ -39,7 +39,7 @@ func StopTimeToCards(s traincat.StopTime) string {
 	q.Add("origin", origin.Name)
 	q.Add("terminus", terminus.Name)
 
-	return fmt.Sprintf("%s/generate?%s", viper.GetString("cards-generator.host"), q.Encode())
+	return fmt.Sprintf("%s/generate/stop_time?%s", viper.GetString("cards-generator.host"), q.Encode())
 }
 
 func BotHasFail(res *dialogflow.Response, err error) (*dialogflow.Response, error) {
