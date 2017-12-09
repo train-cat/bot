@@ -76,6 +76,8 @@ func (n notification) send() {
 		switch a.Type {
 		case traincat.ActionTypeTelegram:
 			err = Telegram(a.getUserID(a.Type), messageOne, messageTwo)
+		case traincat.ActionTypeMessenger:
+			err = Messenger(a.getUserID(a.Type), messageOne, messageTwo)
 		}
 
 		if err != nil {
@@ -99,6 +101,10 @@ func (a action) getUserID(typ string) string {
 	switch typ {
 	case traincat.ActionTypeTelegram:
 		userID, _ := a.Data["user_id"]
+
+		return userID
+	case traincat.ActionTypeMessenger:
+		userID, _ := a.Data["messenger_id"]
 
 		return userID
 	default:

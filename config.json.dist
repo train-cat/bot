@@ -18,6 +18,11 @@
         "token": "",
         "telegram": {
             "token": ""
+        },
+        "messenger": {
+            "page_token": "",
+            "verify_token": "",
+            "secret_key": ""
         }
     }
 }
