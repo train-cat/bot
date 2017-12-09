@@ -1,9 +1,14 @@
 package api
 
-import "github.com/train-cat/client-train-go"
+import (
+	"github.com/train-cat/client-train-go"
+	"github.com/Eraac/dialogflow"
+)
 
 // CreateAlert -
-func CreateAlert(stationID int, stopTimeID uint, typ string, userID string) error {
+func CreateAlert(stationID int, stopTimeID uint, source string, userID string) error {
+	typ := sourceToActionType(source)
+
 	actionInput := traincat.ActionInput{
 		Type: typ,
 		Data: generateData(typ, userID),
@@ -33,4 +38,12 @@ func generateData(typ string, userID string) map[string]string {
 	}
 
 	return data
+}
+
+func sourceToActionType(source string) string {
+	if source == dialogflow.PlatformFacebook {
+		return traincat.ActionTypeMessenger
+	}
+
+	return source
 }

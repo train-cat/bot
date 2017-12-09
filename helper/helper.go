@@ -22,6 +22,15 @@ func String(s string) *string {
 	return &s
 }
 
+// FormatSchedule transform 04:00:00 (from dialogflow) to 04:00
+func FormatSchedule(schedule string) string {
+	if len(schedule) >= 8 {
+		return schedule[0:5]
+	}
+
+	return schedule
+}
+
 // StopTimeToCards return url of the image
 func StopTimeToCards(s traincat.StopTime) string {
 	var mission string

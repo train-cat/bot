@@ -100,12 +100,16 @@ func CreateAlertSelectStoptime(req *dialogflow.Request) (*dialogflow.Response, e
 		return helper.BotHasFail(res, err)
 	}
 
-	// TODO if stopstime 0 -> event custom + message "no_train"
+	if len(stopsTime) == 0 {
+		return forwardToCreateAlert(res, wording.Get(
+			wording.NoStopTime, api.FindStationNameByID(originID), api.FindStationNameByID(destinationID), helper.FormatSchedule(schedule)),
+		)
+	}
 
 	if req.Result.ResolvedQuery == evtSelectStopsTime {
 		res.AddText(dialogflow.TextMessage{Speech: wording.Get(wording.AskListSchedule)}, helper.Platforms...)
 
-		// TODO prévoir une version orale aussi
+		// TODO add oral version
 
 		for i, stoptime := range stopsTime {
 			str := fmt.Sprintf("Choix %d", i+1)

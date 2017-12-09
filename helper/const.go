@@ -13,5 +13,5 @@ const (
 
 var (
 	// Platforms we have to interact with this bot
-	Platforms = []string{dialogflow.PlatformDialogflow, dialogflow.PlatformTelegram}
+	Platforms = []string{dialogflow.PlatformDialogflow, dialogflow.PlatformTelegram, dialogflow.PlatformFacebook}
 )
