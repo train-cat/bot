@@ -14,6 +14,8 @@ func getHandler() *dialogflow.Router {
 
 	h.HandleFunc(intent.ActionWelcome, intent.Welcome)
 	h.HandleFunc(intent.ActionCancel, intent.Cancel)
+	h.HandleFunc(intent.ActionHelp, intent.Help)
+	h.HandleFunc(intent.ActionThankYou, intent.ThankYou)
 	h.HandleFunc(intent.ActionAskingForCreateAlert, intent.AskingForCreateAlert)
 	h.HandleFunc(intent.ActionCreateAlert, intent.CreateAlert)
 	h.HandleFunc(intent.ActionCreateAlertSelectStoptime, intent.CreateAlertSelectStoptime)

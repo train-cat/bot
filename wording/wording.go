@@ -21,6 +21,8 @@ const (
 	IssueOne            = "issue_one"
 	IssueTwo            = "issue_two"
 	HasFail             = "has_fail"
+	Help                = "help"
+	ThankYou            = "thank_you"
 )
 
 var (
@@ -42,6 +44,8 @@ var (
 		IssueOne:            {"Hey, malheureusement ton train au départ de %s à %s est %s. ✊✊"},
 		IssueTwo:            {"Je ne suis pas encore capable de t'aider 😢. Mais promis je travaille dur pour y arriver ! Bon courage 😊"},
 		HasFail:             {"Désolé, il semble que quelque chose n'est pas fonctionné correctement, peux-tu réessayer plus tard ?"},
+		Help:                {"Je suis capable de t'alerter quand ton train est supprimé ou retardé, avant même que tu partes de chez toi ! 💪"},
+		ThankYou:            {"Pas de soucis 😊"},
 	}
 )
 
