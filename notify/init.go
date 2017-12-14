@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/abhinavdahiya/go-messenger-bot"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/train-cat/bot/helper"
 	"gopkg.in/telegram-bot-api.v4"
@@ -16,8 +16,12 @@ var (
 	token     string
 )
 
+var l logrus.FieldLogger
+
 // Init should be call after log & config init
-func Init() {
+func Init(fl logrus.FieldLogger) {
+	l = fl.WithField("action", "notify")
+
 	var err error
 	debug := viper.GetBool("bot.debug")
 
@@ -31,7 +35,7 @@ func Init() {
 
 func exitOnError(err error) {
 	if err != nil {
-		log.Errorf("[init notification] %s", err)
+		l.WithField("status", "error").Error(err.Error())
 		os.Exit(helper.ExitCodeErrorInitNotification)
 	}
 }

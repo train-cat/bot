@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/train-cat/bot/wording"
 	"github.com/train-cat/client-train-go"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/tools/go/gcimporter15/testdata"
 )
 
 type (
@@ -36,7 +37,7 @@ const (
 // Handler notify request asking for notification
 func Handler(w http.ResponseWriter, req *http.Request) {
 	if !isTrustRequest(req) {
-		log.Errorf("[handler notify] untrust request")
+		l.WithField("status", "unauthorized").Warn("unauthorized")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -46,14 +47,14 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	bs, err := ioutil.ReadAll(req.Body)
 
 	if err != nil {
-		log.Errorf("[handler notify] %s", err)
+		l.WithField("status", "error").Error(err.Error())
 		return
 	}
 
 	err = json.Unmarshal(bs, n)
 
 	if err != nil {
-		log.Errorf("[handler notify] %s", err)
+		l.WithField("status", "error").Error(err.Error())
 		return
 	}
 
@@ -73,6 +74,8 @@ func (n notification) send() {
 	messageTwo := wording.Get(wording.IssueTwo)
 
 	for _, a := range n.Actions {
+		lg := l.WithField("type", a.Type)
+
 		switch a.Type {
 		case traincat.ActionTypeTelegram:
 			err = Telegram(a.getUserID(a.Type), messageOne, messageTwo)
@@ -81,8 +84,11 @@ func (n notification) send() {
 		}
 
 		if err != nil {
-			log.Errorf("[send notification] %s", err)
+			lg.WithField("status", "error").Error(err.Error())
+			continue
 		}
+
+		lg.WithField("status", "success").Info("success")
 	}
 }
 

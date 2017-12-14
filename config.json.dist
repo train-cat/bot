@@ -24,5 +24,12 @@
             "verify_token": "",
             "secret_key": ""
         }
+    },
+    "influxdb": {
+        "host": "",
+        "username": "",
+        "password": "",
+        "database": "",
+        "measurement": "bot"
     }
 }

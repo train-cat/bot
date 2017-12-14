@@ -2,14 +2,16 @@ package main
 
 import (
 	"github.com/Eraac/dialogflow"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/train-cat/bot/intent"
 )
 
 func getHandler() *dialogflow.Router {
 	h := dialogflow.NewRouter(dialogflow.Config{
-		Debug: viper.GetBool("bot.debug"),
-		Token: viper.GetString("dialogflow.token"),
+		Debug:  viper.GetBool("bot.debug"),
+		Token:  viper.GetString("dialogflow.token"),
+		Logger: logrus.StandardLogger(),
 	})
 
 	h.HandleFunc(intent.ActionWelcome, intent.Welcome)

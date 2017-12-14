@@ -4,7 +4,9 @@ import (
 	"flag"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/Abramovic/logrus_influxdb"
+	"github.com/influxdata/influxdb/client/v2"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/train-cat/bot/api"
 	"github.com/train-cat/bot/helper"
@@ -12,16 +14,33 @@ import (
 )
 
 func init() {
-	initLogging()
 	initConfig()
+	initLogging()
 	api.Init()
-	notify.Init()
+	notify.Init(logrus.StandardLogger())
 }
 
 func initLogging() {
-	log.SetFormatter(&log.TextFormatter{})
-	log.SetOutput(os.Stderr)
-	log.SetLevel(log.DebugLevel)
+	config := &logrus_influxdb.Config{
+		Database:    viper.GetString("influxdb.database"),
+		Measurement: viper.GetString("influxdb.measurement"),
+		Tags:        []string{"action", "intent", "status", "source", "session_id", "user_id", "type"},
+	}
+
+	// Connect to InfluxDB using the standard client.
+	influxClient, _ := client.NewHTTPClient(client.HTTPConfig{
+		Addr:     viper.GetString("influxdb.host"),
+		Username: viper.GetString("influxdb.username"),
+		Password: viper.GetString("influxdb.password"),
+	})
+
+	hook, err := logrus_influxdb.NewInfluxDB(config, influxClient)
+
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	logrus.AddHook(hook)
 }
 
 func initConfig() {
@@ -33,9 +52,9 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Infof("Using config file: %s", viper.ConfigFileUsed())
+		logrus.Infof("Using config file: %s", viper.ConfigFileUsed())
 	} else {
-		log.Error(err.Error())
+		logrus.Error(err.Error())
 		os.Exit(helper.ExitCodeErrorInitConfig)
 	}
 }
