@@ -7,8 +7,6 @@ import (
 
 	"github.com/train-cat/bot/wording"
 	"github.com/train-cat/client-train-go"
-	"github.com/sirupsen/logrus"
-	"golang.org/x/tools/go/gcimporter15/testdata"
 )
 
 type (
